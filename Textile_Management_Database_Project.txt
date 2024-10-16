@@ -1,0 +1,555 @@
+Enter password: *********
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 10
+Server version: 8.0.28 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2022, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> create database Textile_Management_System;
+Query OK, 1 row affected (0.09 sec)
+
+mysql> use Textile_Management_System;
+Database changed
+mysql> CREATE TABLE Products (    sku INT PRIMARY KEY,    mpn INT,    name VARCHAR(255),    price DECIMAL(10, 2),    in_stock BOOLEAN,    currency VARCHAR(10),    brand VARCHAR(100),    description TEXT,    gender VARCHAR(50));
+Query OK, 0 rows affected (0.46 sec)
+
+mysql> INSERT INTO Products (sku, mpn, name, price, in_stock, currency, brand, description, gender)VALUES (10017413, 10017413, 'DKNY Unisex Black & Grey Printed Medium Trolley Bag', 11745, TRUE, 'INR', 'DKNY', 'Black and grey printed medium trolley bag', 'Unisex'),       (10016283, 10016283, 'EthnoVogue Women Beige & Grey Made to Measure Kurta', 5810, TRUE, 'INR', 'EthnoVogue', 'Beige & Grey made to measure kurta', 'Women');
+Query OK, 2 rows affected (0.05 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> describe Products;
++-------------+---------------+------+-----+---------+-------+
+| Field       | Type          | Null | Key | Default | Extra |
++-------------+---------------+------+-----+---------+-------+
+| sku         | int           | NO   | PRI | NULL    |       |
+| mpn         | int           | YES  |     | NULL    |       |
+| name        | varchar(255)  | YES  |     | NULL    |       |
+| price       | decimal(10,2) | YES  |     | NULL    |       |
+| in_stock    | tinyint(1)    | YES  |     | NULL    |       |
+| currency    | varchar(10)   | YES  |     | NULL    |       |
+| brand       | varchar(100)  | YES  |     | NULL    |       |
+| description | text          | YES  |     | NULL    |       |
+| gender      | varchar(50)   | YES  |     | NULL    |       |
++-------------+---------------+------+-----+---------+-------+
+9 rows in set (0.06 sec)
+
+mysql> select * from Products;
++----------+----------+-----------------------------------------------------+----------+----------+----------+------------+-------------------------------------------+--------+
+| sku      | mpn      | name                                                | price    | in_stock | currency | brand      | description                               | gender |
++----------+----------+-----------------------------------------------------+----------+----------+----------+------------+-------------------------------------------+--------+
+| 10016283 | 10016283 | EthnoVogue Women Beige & Grey Made to Measure Kurta |  5810.00 |        1 | INR      | EthnoVogue | Beige & Grey made to measure kurta        | Women  |
+| 10017413 | 10017413 | DKNY Unisex Black & Grey Printed Medium Trolley Bag | 11745.00 |        1 | INR      | DKNY       | Black and grey printed medium trolley bag | Unisex |
++----------+----------+-----------------------------------------------------+----------+----------+----------+------------+-------------------------------------------+--------+
+2 rows in set (0.03 sec)
+
+mysql> ALTER TABLE Products MODIFY price DECIMAL(10, 2) NOT NULL CHECK (price > 0),MODIFY in_stock BOOLEAN NOT NULL, MODIFY gender VARCHAR(50) NOT NULL;
+Query OK, 2 rows affected (0.15 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> describe Products;
++-------------+---------------+------+-----+---------+-------+
+| Field       | Type          | Null | Key | Default | Extra |
++-------------+---------------+------+-----+---------+-------+
+| sku         | int           | NO   | PRI | NULL    |       |
+| mpn         | int           | YES  |     | NULL    |       |
+| name        | varchar(255)  | YES  |     | NULL    |       |
+| price       | decimal(10,2) | NO   |     | NULL    |       |
+| in_stock    | tinyint(1)    | NO   |     | NULL    |       |
+| currency    | varchar(10)   | YES  |     | NULL    |       |
+| brand       | varchar(100)  | YES  |     | NULL    |       |
+| description | text          | YES  |     | NULL    |       |
+| gender      | varchar(50)   | NO   |     | NULL    |       |
++-------------+---------------+------+-----+---------+-------+
+9 rows in set (0.03 sec)
+
+mysql> SELECT name, price, brand FROM Products WHERE gender = 'Women' AND price > 1000;
++-----------------------------------------------------+---------+------------+
+| name                                                | price   | brand      |
++-----------------------------------------------------+---------+------------+
+| EthnoVogue Women Beige & Grey Made to Measure Kurta | 5810.00 | EthnoVogue |
++-----------------------------------------------------+---------+------------+
+1 row in set (0.03 sec)
+
+mysql> SELECT brand, COUNT(*) AS product_count FROM Products GROUP BY brand;
++------------+---------------+
+| brand      | product_count |
++------------+---------------+
+| EthnoVogue |             1 |
+| DKNY       |             1 |
++------------+---------------+
+2 rows in set (0.03 sec)
+
+mysql> SELECT brand, COUNT(*) AS product_count FROM Products GROUP BY brand HAVING COUNT(*) > 10;
+Empty set (0.04 sec)
+
+mysql> SELECT name, price, brand FROM Products ORDER BY price DESC;
++-----------------------------------------------------+----------+------------+
+| name                                                | price    | brand      |
++-----------------------------------------------------+----------+------------+
+| DKNY Unisex Black & Grey Printed Medium Trolley Bag | 11745.00 | DKNY       |
+| EthnoVogue Women Beige & Grey Made to Measure Kurta |  5810.00 | EthnoVogue |
++-----------------------------------------------------+----------+------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT DISTINCT brand FROM Products LIMIT 5;
++------------+
+| brand      |
++------------+
+| EthnoVogue |
+| DKNY       |
++------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT name, price FROM Products WHERE name LIKE '%Kurta%';
++-----------------------------------------------------+---------+
+| name                                                | price   |
++-----------------------------------------------------+---------+
+| EthnoVogue Women Beige & Grey Made to Measure Kurta | 5810.00 |
++-----------------------------------------------------+---------+
+1 row in set (0.03 sec)
+
+mysql> CREATE TABLE Customers (    customer_id INT PRIMARY KEY,    customer_name VARCHAR(100),    email VARCHAR(100),    phone VARCHAR(15),    address VARCHAR(255));
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> INSERT INTO Customers (customer_id, customer_name, email, phone, address)VALUES (1, 'Anika Sharma', 'anika.sharma@example.com', '9876543210', 'Guwahati, Assam'),       (2, 'Rahul Das', 'rahul.das@example.com', '9867123456', 'Jorhat, Assam'),       (3, 'Priya Singhal', 'priya.singhal@example.com', '9812345678', 'Tezpur, Assam');
+Query OK, 3 rows affected (0.03 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> describe Customers;
++---------------+--------------+------+-----+---------+-------+
+| Field         | Type         | Null | Key | Default | Extra |
++---------------+--------------+------+-----+---------+-------+
+| customer_id   | int          | NO   | PRI | NULL    |       |
+| customer_name | varchar(100) | YES  |     | NULL    |       |
+| email         | varchar(100) | YES  |     | NULL    |       |
+| phone         | varchar(15)  | YES  |     | NULL    |       |
+| address       | varchar(255) | YES  |     | NULL    |       |
++---------------+--------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> select * from Customers;
++-------------+---------------+---------------------------+------------+-----------------+
+| customer_id | customer_name | email                     | phone      | address         |
++-------------+---------------+---------------------------+------------+-----------------+
+|           1 | Anika Sharma  | anika.sharma@example.com  | 9876543210 | Guwahati, Assam |
+|           2 | Rahul Das     | rahul.das@example.com     | 9867123456 | Jorhat, Assam   |
+|           3 | Priya Singhal | priya.singhal@example.com | 9812345678 | Tezpur, Assam   |
++-------------+---------------+---------------------------+------------+-----------------+
+3 rows in set (0.00 sec)
+
+mysql> CREATE TABLE Orders (    order_id INT PRIMARY KEY,    customer_id INT,    sku INT,    order_date DATE,    quantity INT,    total_price DECIMAL(10, 2),    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id),    FOREIGN KEY (sku) REFERENCES Products(sku));
+Query OK, 0 rows affected (0.08 sec)
+
+mysql> describe Orders;
++-------------+---------------+------+-----+---------+-------+
+| Field       | Type          | Null | Key | Default | Extra |
++-------------+---------------+------+-----+---------+-------+
+| order_id    | int           | NO   | PRI | NULL    |       |
+| customer_id | int           | YES  | MUL | NULL    |       |
+| sku         | int           | YES  | MUL | NULL    |       |
+| order_date  | date          | YES  |     | NULL    |       |
+| quantity    | int           | YES  |     | NULL    |       |
+| total_price | decimal(10,2) | YES  |     | NULL    |       |
++-------------+---------------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+
+mysql> INSERT INTO Orders (order_id, customer_id, sku, order_date, quantity, total_price)VALUES (1, 1, 1001, '2024-10-10', 2, 2400.00),       (2, 2, 1002, '2024-10-11', 1, 3500.00),       (3, 3, 1003, '2024-10-12', 3, 4500.00);
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`textile_management_system`.`orders`, CONSTRAINT `orders_ibfk_2` FOREIGN KEY (`sku`) REFERENCES `products` (`sku`))
+mysql> INSERT INTO Products (sku, name, price, in_stock, currency, brand, description, gender)VALUES (1001, 'EthnoVogue Kurta', 1200.00, TRUE, 'INR', 'EthnoVogue', 'Traditional cotton kurta', 'Female'),(1002, 'Raymond Men’s Shirt', 3500.00, TRUE, 'INR', 'Raymond', 'Formal office shirt', 'Male'),(1003, 'Levi\'s Women Jeans', 1500.00, TRUE, 'INR', 'Levi\'s', 'Denim jeans for women', 'Female');
+Query OK, 3 rows affected (0.03 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> select * from Products;
++----------+----------+-----------------------------------------------------+----------+----------+----------+------------+-------------------------------------------+--------+
+| sku      | mpn      | name                                                | price    | in_stock | currency | brand      | description                               | gender |
++----------+----------+-----------------------------------------------------+----------+----------+----------+------------+-------------------------------------------+--------+
+|     1001 |     NULL | EthnoVogue Kurta                                    |  1200.00 |        1 | INR      | EthnoVogue | Traditional cotton kurta                  | Female |
+|     1002 |     NULL | Raymond Men?s Shirt                                 |  3500.00 |        1 | INR      | Raymond    | Formal office shirt                       | Male   |
+|     1003 |     NULL | Levi's Women Jeans                                  |  1500.00 |        1 | INR      | Levi's     | Denim jeans for women                     | Female |
+| 10016283 | 10016283 | EthnoVogue Women Beige & Grey Made to Measure Kurta |  5810.00 |        1 | INR      | EthnoVogue | Beige & Grey made to measure kurta        | Women  |
+| 10017413 | 10017413 | DKNY Unisex Black & Grey Printed Medium Trolley Bag | 11745.00 |        1 | INR      | DKNY       | Black and grey printed medium trolley bag | Unisex |
++----------+----------+-----------------------------------------------------+----------+----------+----------+------------+-------------------------------------------+--------+
+5 rows in set (0.00 sec)
+
+mysql> INSERT INTO Products (sku, name, price, in_stock, currency, brand, description, gender)VALUES (1001, 'EthnoVogue Kurta', 1200.00, TRUE, 'INR', 'EthnoVogue', 'Traditional cotton kurta', 'Female'),(1002, 'Raymond Men’s Shirt', 3500.00, TRUE, 'INR', 'Raymond', 'Formal office shirt', 'Male'),(1003, 'Levi\'s Women Jeans', 1500.00, TRUE, 'INR', 'Levi\'s', 'Denim jeans for women', 'Female');^C
+mysql> INSERT INTO Orders (order_id, customer_id, sku, order_date, quantity, total_price)VALUES (1, 1, 1001, '2024-10-10', 2, 2400.00),(2, 2, 1002, '2024-10-11', 1, 3500.00),(3, 3, 1003, '2024-10-12', 3, 4500.00);
+Query OK, 3 rows affected (0.03 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> select * from Orders;
++----------+-------------+------+------------+----------+-------------+
+| order_id | customer_id | sku  | order_date | quantity | total_price |
++----------+-------------+------+------------+----------+-------------+
+|        1 |           1 | 1001 | 2024-10-10 |        2 |     2400.00 |
+|        2 |           2 | 1002 | 2024-10-11 |        1 |     3500.00 |
+|        3 |           3 | 1003 | 2024-10-12 |        3 |     4500.00 |
++----------+-------------+------+------------+----------+-------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT C.customer_name, P.name AS product_name, O.order_date, O.quantity, O.total_priceFROM Customers CJOIN Orders O ON C.customer_id = O.customer_idJOIN Products P ON O.sku = P.sku;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'CJOIN Orders O ON C.customer_id = O.customer_idJOIN Products P ON O.sku = P.sku' at line 1
+mysql> SELECT C.customer_name, P.name AS product_name, O.order_date, O.quantity, O.total_priceFROM Customers C JOIN Orders O ON C.customer_id = O.customer_id JOIN Products P ON O.sku = P.sku;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'C JOIN Orders O ON C.customer_id = O.customer_id JOIN Products P ON O.sku = P.sk' at line 1
+mysql> SELECT C.customer_name, P.name AS product_name, O.order_date, O.quantity, O.total_price FROM Customers C JOIN Orders O ON C.customer_id = O.customer_id JOIN Products P ON O.sku = P.sku;
++---------------+---------------------+------------+----------+-------------+
+| customer_name | product_name        | order_date | quantity | total_price |
++---------------+---------------------+------------+----------+-------------+
+| Anika Sharma  | EthnoVogue Kurta    | 2024-10-10 |        2 |     2400.00 |
+| Rahul Das     | Raymond Men?s Shirt | 2024-10-11 |        1 |     3500.00 |
+| Priya Singhal | Levi's Women Jeans  | 2024-10-12 |        3 |     4500.00 |
++---------------+---------------------+------------+----------+-------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT O.order_id, C.customer_name, P.name AS product_name, O.order_date FROM Orders O RIGHT JOIN Customers C ON O.customer_id = C.customer_id RIGHT JOIN Products P ON O.sku = P.sku;
++----------+---------------+-----------------------------------------------------+------------+
+| order_id | customer_name | product_name                                        | order_date |
++----------+---------------+-----------------------------------------------------+------------+
+|        1 | Anika Sharma  | EthnoVogue Kurta                                    | 2024-10-10 |
+|        2 | Rahul Das     | Raymond Men?s Shirt                                 | 2024-10-11 |
+|        3 | Priya Singhal | Levi's Women Jeans                                  | 2024-10-12 |
+|     NULL | NULL          | EthnoVogue Women Beige & Grey Made to Measure Kurta | NULL       |
+|     NULL | NULL          | DKNY Unisex Black & Grey Printed Medium Trolley Bag | NULL       |
++----------+---------------+-----------------------------------------------------+------------+
+5 rows in set (0.04 sec)
+
+mysql> SELECT C.customer_name, P.name AS product_name, O.order_date FROM Customers C LEFT JOIN Orders O ON C.customer_id = O.customer_id LEFT JOIN Products P ON O.sku = P.sku UNION SELECT C.customer_name, P.name AS product_name, O.order_date FROM Customers C RIGHT JOIN Orders O ON C.customer_id = O.customer_id RIGHT JOIN Products P ON O.sku = P.sku;
++---------------+-----------------------------------------------------+------------+
+| customer_name | product_name                                        | order_date |
++---------------+-----------------------------------------------------+------------+
+| Anika Sharma  | EthnoVogue Kurta                                    | 2024-10-10 |
+| Rahul Das     | Raymond Men?s Shirt                                 | 2024-10-11 |
+| Priya Singhal | Levi's Women Jeans                                  | 2024-10-12 |
+| NULL          | EthnoVogue Women Beige & Grey Made to Measure Kurta | NULL       |
+| NULL          | DKNY Unisex Black & Grey Printed Medium Trolley Bag | NULL       |
++---------------+-----------------------------------------------------+------------+
+5 rows in set (0.03 sec)
+
+mysql> SELECT C.customer_name, P.name AS product_name, O.order_date, O.quantity, O.total_price FROM Customers C LEFT JOIN Orders O ON C.customer_id = O.customer_id LEFT JOIN Products P ON O.sku = P.sku UNION SELECT C.customer_name, P.name AS product_name, O.order_date, O.quantity, O.total_price FROM Customers C RIGHT JOIN Orders O ON C.customer_id = O.customer_id RIGHT JOIN Products P ON O.sku = P.sku;
++---------------+-----------------------------------------------------+------------+----------+-------------+
+| customer_name | product_name                                        | order_date | quantity | total_price |
++---------------+-----------------------------------------------------+------------+----------+-------------+
+| Anika Sharma  | EthnoVogue Kurta                                    | 2024-10-10 |        2 |     2400.00 |
+| Rahul Das     | Raymond Men?s Shirt                                 | 2024-10-11 |        1 |     3500.00 |
+| Priya Singhal | Levi's Women Jeans                                  | 2024-10-12 |        3 |     4500.00 |
+| NULL          | EthnoVogue Women Beige & Grey Made to Measure Kurta | NULL       |     NULL |        NULL |
+| NULL          | DKNY Unisex Black & Grey Printed Medium Trolley Bag | NULL       |     NULL |        NULL |
++---------------+-----------------------------------------------------+------------+----------+-------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT UPPER(name) FROM Products;
++-----------------------------------------------------+
+| UPPER(name)                                         |
++-----------------------------------------------------+
+| ETHNOVOGUE KURTA                                    |
+| RAYMOND MEN?S SHIRT                                 |
+| LEVI'S WOMEN JEANS                                  |
+| ETHNOVOGUE WOMEN BEIGE & GREY MADE TO MEASURE KURTA |
+| DKNY UNISEX BLACK & GREY PRINTED MEDIUM TROLLEY BAG |
++-----------------------------------------------------+
+5 rows in set (0.03 sec)
+
+mysql> SELECT name, price, (price * 0.90) AS discounted_price FROM Products;
++-----------------------------------------------------+----------+------------------+
+| name                                                | price    | discounted_price |
++-----------------------------------------------------+----------+------------------+
+| EthnoVogue Kurta                                    |  1200.00 |        1080.0000 |
+| Raymond Men?s Shirt                                 |  3500.00 |        3150.0000 |
+| Levi's Women Jeans                                  |  1500.00 |        1350.0000 |
+| EthnoVogue Women Beige & Grey Made to Measure Kurta |  5810.00 |        5229.0000 |
+| DKNY Unisex Black & Grey Printed Medium Trolley Bag | 11745.00 |       10570.5000 |
++-----------------------------------------------------+----------+------------------+
+5 rows in set (0.01 sec)
+
+mysql> SELECT C.customer_name, SUM(O.quantity) AS total_quantity FROM Customers C JOIN Orders O ON C.customer_id = O.customer_id GROUP BY C.customer_name;
++---------------+----------------+
+| customer_name | total_quantity |
++---------------+----------------+
+| Anika Sharma  |              2 |
+| Rahul Das     |              1 |
+| Priya Singhal |              3 |
++---------------+----------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT C.customer_name, AVG(O.quantity) AS average_quantity_ordered FROM Customers C JOIN Orders O ON C.customer_id = O.customer_id GROUP BY C.customer_name;
++---------------+--------------------------+
+| customer_name | average_quantity_ordered |
++---------------+--------------------------+
+| Anika Sharma  |                   2.0000 |
+| Rahul Das     |                   1.0000 |
+| Priya Singhal |                   3.0000 |
++---------------+--------------------------+
+3 rows in set (0.03 sec)
+
+mysql> SELECT P.name AS product_name, P.in_stock FROM Products P WHERE P.in_stock < 10;
++-----------------------------------------------------+----------+
+| product_name                                        | in_stock |
++-----------------------------------------------------+----------+
+| EthnoVogue Kurta                                    |        1 |
+| Raymond Men?s Shirt                                 |        1 |
+| Levi's Women Jeans                                  |        1 |
+| EthnoVogue Women Beige & Grey Made to Measure Kurta |        1 |
+| DKNY Unisex Black & Grey Printed Medium Trolley Bag |        1 |
++-----------------------------------------------------+----------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT P.name AS product_name, SUM(O.quantity * O.total_price) AS total_revenue FROM Products P JOIN Orders O ON P.sku = O.sku GROUP BY P.name;
++---------------------+---------------+
+| product_name        | total_revenue |
++---------------------+---------------+
+| EthnoVogue Kurta    |       4800.00 |
+| Raymond Men?s Shirt |       3500.00 |
+| Levi's Women Jeans  |      13500.00 |
++---------------------+---------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT DATE_FORMAT(O.order_date, '%Y-%m') AS month, SUM(O.total_price) AS total_sales FROM Orders O GROUP BY month ORDER BY month;
++---------+-------------+
+| month   | total_sales |
++---------+-------------+
+| 2024-10 |    10400.00 |
++---------+-------------+
+1 row in set (0.03 sec)
+
+mysql> SELECT name, order_date, EXTRACT(YEAR FROM order_date) AS order_year FROM Orders;
+ERROR 1054 (42S22): Unknown column 'name' in 'field list'
+mysql> select order_id , order_date , EXTRACT(YEAR FROM order_date) AS order_year FROM Orders;
++----------+------------+------------+
+| order_id | order_date | order_year |
++----------+------------+------------+
+|        1 | 2024-10-10 |       2024 |
+|        2 | 2024-10-11 |       2024 |
+|        3 | 2024-10-12 |       2024 |
++----------+------------+------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT name, price FROM Products WHERE price = (SELECT MAX(price) FROM Products WHERE gender = 'Women');
++-----------------------------------------------------+---------+
+| name                                                | price   |
++-----------------------------------------------------+---------+
+| EthnoVogue Women Beige & Grey Made to Measure Kurta | 5810.00 |
++-----------------------------------------------------+---------+
+1 row in set (0.01 sec)
+
+mysql> SELECT C.customer_name FROM Customers C WHERE (SELECT SUM(O.total_price)       FROM Orders O       WHERE O.customer_id = C.customer_id) >       (SELECT AVG(total_spent)       FROM (SELECT SUM(O.total_price) AS total_spent             FROM Orders O             GROUP BY O.customer_id) AS customer_spending);
++---------------+
+| customer_name |
++---------------+
+| Rahul Das     |
+| Priya Singhal |
++---------------+
+2 rows in set (0.03 sec)
+
+mysql> SELECT P.name FROM Products P WHERE P.price > (SELECT AVG(price) FROM Products);
++-----------------------------------------------------+
+| name                                                |
++-----------------------------------------------------+
+| EthnoVogue Women Beige & Grey Made to Measure Kurta |
+| DKNY Unisex Black & Grey Printed Medium Trolley Bag |
++-----------------------------------------------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT (SELECT SUM(O.total_price)         FROM Orders O         WHERE O.sku = 1001) AS total_revenue_from_product;
++----------------------------+
+| total_revenue_from_product |
++----------------------------+
+|                    2400.00 |
++----------------------------+
+1 row in set (0.03 sec)
+
+mysql> SELECT C.customer_name,        (SELECT SUM(O.total_price)         FROM Orders O         WHERE O.customer_id = C.customer_id) AS total_spending FROM Customers C ORDER BY total_spending DESC LIMIT 3;
++---------------+----------------+
+| customer_name | total_spending |
++---------------+----------------+
+| Priya Singhal |        4500.00 |
+| Rahul Das     |        3500.00 |
+| Anika Sharma  |        2400.00 |
++---------------+----------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT P.name FROM Products P WHERE (SELECT SUM(O.quantity)        FROM Orders O        WHERE O.sku = P.sku) >       (SELECT AVG(total_quantity)        FROM (SELECT SUM(O.quantity) AS total_quantity              FROM Orders O              GROUP BY O.sku) AS product_sales);
++--------------------+
+| name               |
++--------------------+
+| Levi's Women Jeans |
++--------------------+
+1 row in set (0.00 sec)
+
+mysql> CREATE VIEW OrderSummary AS SELECT C.customer_name,        P.name AS product_name,        O.order_date,        O.quantity,        O.total_price FROM Customers C JOIN Orders O ON C.customer_id = O.customer_idJOIN Products P ON O.sku = P.sku;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Products P ON O.sku = P.sku' at line 1
+mysql> CREATE VIEW OrderSummary AS SELECT C.customer_name,        P.name AS product_name,        O.order_date,        O.quantity,        O.total_price FROM Customers C JOIN Orders O ON C.customer_id = O.customer_id JOIN Products P ON O.sku = P.sku;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> SELECT * FROM OrderSummary;
++---------------+---------------------+------------+----------+-------------+
+| customer_name | product_name        | order_date | quantity | total_price |
++---------------+---------------------+------------+----------+-------------+
+| Anika Sharma  | EthnoVogue Kurta    | 2024-10-10 |        2 |     2400.00 |
+| Rahul Das     | Raymond Men?s Shirt | 2024-10-11 |        1 |     3500.00 |
+| Priya Singhal | Levi's Women Jeans  | 2024-10-12 |        3 |     4500.00 |
++---------------+---------------------+------------+----------+-------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT customer_name, SUM(total_price) AS total_sales FROM OrderSummary GROUP BY customer_name;
++---------------+-------------+
+| customer_name | total_sales |
++---------------+-------------+
+| Anika Sharma  |     2400.00 |
+| Rahul Das     |     3500.00 |
+| Priya Singhal |     4500.00 |
++---------------+-------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT * FROM OrderSummary WHERE order_date BETWEEN '2024-10-01' AND '2024-10-15';
++---------------+---------------------+------------+----------+-------------+
+| customer_name | product_name        | order_date | quantity | total_price |
++---------------+---------------------+------------+----------+-------------+
+| Anika Sharma  | EthnoVogue Kurta    | 2024-10-10 |        2 |     2400.00 |
+| Rahul Das     | Raymond Men?s Shirt | 2024-10-11 |        1 |     3500.00 |
+| Priya Singhal | Levi's Women Jeans  | 2024-10-12 |        3 |     4500.00 |
++---------------+---------------------+------------+----------+-------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT *FROM OrderSummaryWHERE order_date BETWEEN '2024-10-01' AND '2024-10-15';^Z^C
+mysql> BEGIN;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> UPDATE Products SET price = price * 1.10 WHERE brand = 'Raymond';
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> SELECT name, price FROM Products WHERE brand = 'Raymond';
++---------------------+---------+
+| name                | price   |
++---------------------+---------+
+| Raymond Men?s Shirt | 3850.00 |
++---------------------+---------+
+1 row in set (0.00 sec)
+
+mysql> SELECT ROW_COUNT();
++-------------+
+| ROW_COUNT() |
++-------------+
+|          -1 |
++-------------+
+1 row in set (0.00 sec)
+
+mysql> COMMIT;
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> BEGIN;UPDATE Products SET price = price * 1.20 WHERE brand = 'Parx'; ^CLLBACK;
+mysql> BEGIN;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> BEGIN;UPDATE Products SET price = price * 1.20 WHERE brand = 'Parx';ROLLBACK;
+Query OK, 0 rows affected (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+Rows matched: 0  Changed: 0  Warnings: 0
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SELECT name, price FROM Products WHERE brand = 'Parx';
+Empty set (0.00 sec)
+
+mysql> LOAD DATA INFILE '"C:\Users\LENOVO\Desktop\Myntra_fashion_products.csv"'INTO TABLE ProductsFIELDS TERMINATED BY ',' ENCLOSED BY '"'LINES TERMINATED BY '\n'IGNORE 1 ROWS;^C
+mysql> LOAD DATA INFILE LOAD DATA INFILE '"C:\Users\LENOVO\Desktop\Myntra_fashion_products.csv"'INTO TABLE ProductsFIELDS TERMINATED BY ',' ENCLOSED BY '"'LINES TERMINATED BY '\n'IGNORE 1 ROWS;c^C
+mysql> LOAD DATA INFILE  'C:\Users\LENOVO\Desktop\Myntra_fashion_products.csv'
+    -> INTO TABLE Products
+    -> FIELDS TERMINATED BY ','
+    -> ENCLOSED BY ""
+    -> LINES TERMINATED BY '\n'
+    -> IGNORE 1 ROWS;
+ERROR 1290 (HY000): The MySQL server is running with the --secure-file-priv option so it cannot execute this statement
+mysql> SHOW VARIABLES LIKE 'secure_file_priv';
++------------------+------------------------------------------------+
+| Variable_name    | Value                                          |
++------------------+------------------------------------------------+
+| secure_file_priv | C:\ProgramData\MySQL\MySQL Server 8.0\Uploads\ |
++------------------+------------------------------------------------+
+1 row in set (0.04 sec)
+
+mysql> LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/Myntra_fashion_products.csv'INTO TABLE ProductsFIELDS TERMINATED BY ',' ENCLOSED BY '"'LINES TERMINATED BY '\n'IGNORE 1 ROWS;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'TERMINATED BY ',' ENCLOSED BY '"'LINES TERMINATED BY '\n'IGNORE 1 ROWS' at line 1
+mysql> LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/Myntra_fashion_products.csv'
+    -> INTO TABLE Products
+    -> FIELDS TERMINATED BY ','
+    -> ENCLOSED BY '"'
+    -> LINES TERMINATED BY '\n'
+    -> IGNORE 1 ROWS;
+ERROR 29 (HY000): File 'C:\ProgramData\MySQL\MySQL Server 8.0\Uploads\Myntra_fashion_products.csv' not found (OS errno 2 - No such file or directory)
+mysql> SET GLOBAL local_infile = 'ON';
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> LOAD DATA LOCAL INFILE 'C:/Users/LENOVO/Desktop/Myntra_fashion_products.csv'
+    -> INTO TABLE Products
+    -> FIELDS TERMINATED BY ','
+    -> ENCLOSED BY '"'
+    -> LINES TERMINATED BY '\n'
+    -> IGNORE 1 ROWS;
+ERROR 2068 (HY000): LOAD DATA LOCAL INFILE file request rejected due to restrictions on access.
+mysql> LOAD DATA LOCAL INFILE 'C: ProgramData\MySQL\MySQL Server
+    '> INTO TABLE Products
+    '>  FIELDS TERMINATED BY ','
+    '> LINES TERMINATED BY '\n'
+ERROR:
+Unknown command '\n'.
+    '> IGNORE 1 ROWS;
+    '> ^C
+mysql> CC^C
+mysql> IGNORE 1 ROWS;^C
+mysql> LOAD DATA LOCAL INFILE 'C: ProgramData\MySQL\MySQL Server 8.0\Users\LENOVO\Desktop\Myntra_fashion_products.csv"
+    '> INTO TABLE Products
+    '> FIELDS TERMINATED BY ','
+    '> ENCLOSED BY '"'
+    "> LINES TERMINATED BY '\n'
+    "> ^C
+mysql> LOAD DATA LOCAL INFILE 'C: ProgramData\MySQL\MySQL Server 8.0\Users\LENOVO\Desktop\Myntra_fashion_products.csv"
+    '>  INTO TABLE Products
+    '> FIELDS TERMINATED BY ','
+    '> ENCLOSED BY '"'
+    "> LINES TERMINATED BY '\n'
+    "> IGNORE 1 ROWS;
+    "> ^C
+mysql> LOAD DATA LOCAL INFILE 'C:/Users/LENOVO/Desktop/Myntra_fashion_products.csv' INTO TABLE Products FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
+ERROR 2068 (HY000): LOAD DATA LOCAL INFILE file request rejected due to restrictions on access.
+mysql> SHOW VARIABLES LIKE 'local_infile';
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| local_infile  | ON    |
++---------------+-------+
+1 row in set (0.00 sec)
+
+mysql> SET GLOBAL local_infile = 1;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SHOW VARIABLES LIKE 'local_infile';
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| local_infile  | ON    |
++---------------+-------+
+1 row in set (0.00 sec)
+
+mysql> LOAD DATA LOCAL INFILE 'C:/Users/LENOVO/Desktop/Myntra_fashion_products.csv' INTO TABLE Products FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
+ERROR 2068 (HY000): LOAD DATA LOCAL INFILE file request rejected due to restrictions on access.
+mysql> mysql --local-infile=1 -u your_username -p^C
+mysql> SELECT USER();
++----------------+
+| USER()         |
++----------------+
+| root@localhost |
++----------------+
+1 row in set (0.00 sec)
+
+mysql> mysql --local-infile=1 -u root@localhost -p
+    -> LOAD DATA LOCAL INFILE 'C:/Users/LENOVO/Desktop/Myntra_fashion_products.csv' INTO TABLE Products FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'mysql --local-infile=1 -u root@localhost -p
+LOAD DATA LOCAL INFILE 'C:/Users/LEN' at line 1
+mysql> c
